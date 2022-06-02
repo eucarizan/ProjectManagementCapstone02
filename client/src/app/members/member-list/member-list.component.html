@@ -1,0 +1,112 @@
+<div class="container">
+    <!-- <div class="row">
+    <div class="col-2">
+    </div>
+</div> -->
+    <h2 class="py-2">Members</h2>
+    <table class="table table-light table-striped table-hover" *ngIf="members?.length > 0">
+        <thead>
+            <tr class="text-center">
+                <th>Employee Id</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Gender</th>
+                <th>City</th>
+                <th>Country</th>
+                <th>Commands</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="text-center" *ngFor="let member of members;">
+                <td>{{member.id}}</td>
+                <td>{{member.firstName}}</td>
+                <td>{{member.lastName}}</td>
+                <td>{{member.email}}</td>
+                <td>{{member.mobile}}</td>
+                <td>{{member.gender}}</td>
+                <td>{{member.city}}</td>
+                <td>{{member.country}}</td>
+                <td>
+                    <button routerLink="/members/{{member.username}}" class="btn btn-primary"><i
+                            class="fa fa-user "></i></button>
+                    <button [disabled]="member.username == 'admin'" class="btn btn-danger ms-1" (click)="deleteMember(member.username)" *appHasRole="['Admin', 'Manager']"><i
+                            class="fa fa-trash"></i></button>
+                    <button class="btn btn-warning ms-1" data-bs-toggle="modal" data-bs-target="#updateMemberModal"
+                        (click)="patchValues(member)" *appHasRole="['Admin', 'Manager']"><i class="fa fa-pencil"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center" *ngIf="pagination">
+        <pagination [boundaryLinks]="true" [totalItems]="pagination.totalItems" [itemsPerPage]="pagination.itemsPerPage"
+            [(ngModel)]="pagination.currentPage" (pageChanged)="pageChanged($event)" previousText="&lsaquo;"
+            nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+
+        </pagination>
+    </div>
+
+    <div class="modal fade" id="updateMemberModal" data-bs-backdrop="static" data-bs-keyboard="false"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center text-primary">Update user details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="closeUpdateMember()"></button>
+                </div>
+                <form [formGroup]="updateMemberForm" (ngSubmit)="updateMemberForm.valid && updateMember()"
+                    autocomplete="off">
+                    <div class="modal-body">
+                        <app-text-input [formControl]="updateMemberForm.controls['username']" [label]="'Username'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateMemberForm.controls['firstName']" [label]="'First Name'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateMemberForm.controls['lastName']" [label]="'Last Name'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateMemberForm.controls['mobile']" [label]="'Mobile'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateMemberForm.controls['email']" [label]="'Email'">
+                        </app-text-input>
+                        <app-date-input [formControl]="updateMemberForm.controls['dateOfBirth']"
+                            [label]="'Date of birth'">
+                        </app-date-input>
+                        <app-text-input [formControl]="updateMemberForm.controls['city']" [label]="'City'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateMemberForm.controls['country']" [label]="'Country'">
+                        </app-text-input>
+
+                        <div class="form-group mt-2">
+                            <label style="margin-right: 10px;" class="control-label">I am a: </label>
+                            <label class="radio-inline">
+                                <input type="radio" value="male" formControlName="gender"> Male
+                            </label>
+                            <label class="radio-inline">
+                                <input class="ms-3 mb-3" type="radio" value="female" formControlName="gender"> Female
+                            </label>
+                        </div>
+
+                        <!-- <div class="row mt-5" *ngIf="validationErrors.length > 0">
+                        <ul class="text-danger">
+                            <li *ngFor="let error of validationErrors">{{error}}</li>
+                        </ul>
+                    </div> -->
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="form-group text-center mt-2">
+                            <button class="btn btn-warning me-2" (click)="closeUpdateMember()" data-bs-dismiss="modal"
+                                type="button">Cancel</button>
+                            <button [disabled]="!updateMemberForm.valid" class="btn btn-success me-2" type="submit"
+                                data-bs-dismiss="modal">Save
+                                changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+<div class="container">
+    <h2 class="py-2">Member detail</h2>
+    <div class="row" *ngIf="member">
+        <div class="col-4">
+            <div class="card">
+                <img src="./assets/user.png" alt="{{member.username}}" class="card-img-top img-thumbnail">
+                <div class="card-body">
+                    <div>
+                        <strong>Name: </strong>
+                        <p>{{member.firstName}}, {{member.lastName}}</p>
+                    </div>
+                    <div>
+                        <strong>Location: </strong>
+                        <p>{{member.city}}, {{member.country}}</p>
+                    </div>
+                    <div>
+                        <strong>Email: </strong>
+                        <p>{{member.email}}</p>
+                    </div>
+                    <div>
+                        <strong>Mobile: </strong>
+                        <p>{{member.mobile}}</p>
+                    </div>
+                </div>
+                <!-- <div class="card-footer">
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-primary"></button>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="col-8">
+            <tabset class="member-tabset">
+                <tab heading="Projects">
+                    <table class="table table-light table-striped table-hover" *ngIf="member.projects?.length > 0">
+                        <thead class="text-center">
+                            <tr>
+                                <th>Name</th>
+                                <th>Client</th>
+                                <th>Manager Id</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="text-center" *ngFor="let project of member.projects">
+                                <td>{{project.projectName}}</td>
+                                <td>{{project.clientName}}</td>
+                                <td>{{project.managerId}}</td>
+                                <td>{{project.isActive? 'Active' : 'Inactive'}}</td>
+                                <td>
+                                    <p>{{(project.projectDescription.length > 20) ? ( project.projectDescription | slice:0:20 ) + '...' :
+                                    project.projectDescription}}</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </tab>
+                <tab heading="Tasks">
+                    <p>tasks goes here</p>
+                </tab>
+            </tabset>
+        </div>
+    </div>
+</div>

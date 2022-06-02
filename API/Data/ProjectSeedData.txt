@@ -1,0 +1,15 @@
+[
+  '{{repeat(5)}}',
+  {
+    Id: '{{index()}}',
+    ProjectName: "{{company()}}",
+    StartDate: '{{date(new Date(2019, 0, 1), new Date(2020,5,30), "YYYY-MM-dd")}}',
+    EndDate: '{{date(new Date(2020, 4, 1), new Date(2020,5,30), "YYYY-MM-dd")}}',
+    ProjectDescription: '{{lorem(1, "paragraphs")}}',
+    ManagerId: '',
+    ClientName: '{{firstName()}} {{surname()}}',
+    Budget: '{{integer(500, 2000)}}',
+    IsActive: '{{bool()}}',
+    Members: []
+  }
+]

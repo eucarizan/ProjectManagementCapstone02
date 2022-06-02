@@ -1,0 +1,22 @@
+<div class="container">
+    <div *ngIf="project">
+        <h3 class="py-2">{{project.projectName}} project details</h3>
+        <table class="table table-light table-striped table-hover text-center" style="width: 500px"
+            *ngIf="project.members?.length > 0">
+            <thead>
+                <tr>
+                    <th class="col-11">Member name</th>
+                    <th class="col-1" *appHasRole="['Admin', 'Manager']">Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let member of project.members">
+                    <th>{{member.username}}</th>
+                    <th  *appHasRole="['Admin', 'Manager']"><button class="btn btn-danger" ><i class="fa fa-trash"
+                                (click)="removeMember(member.username)"></i></button></th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

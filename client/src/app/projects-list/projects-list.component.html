@@ -1,0 +1,134 @@
+<div class="container">
+    <h2 class="py-2">Projects</h2>
+    <table class="table table-light table-striped table-hover" *ngIf="projects?.length > 0">
+        <thead>
+            <tr class="text-center">
+                <th>Id</th>
+                <th>Name</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Client</th>
+                <th>Budget</th>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Commands</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="text-center" *ngFor="let project of projects">
+                <td >{{project.id}}</td>
+                <td>{{project.projectName}}</td>
+                <td>{{project.startDate | date}}</td>
+                <td>{{project.endDate | date}}</td>
+                <td>{{project.clientName}}</td>
+                <td>{{project.budget}}</td>
+                <td>{{project.isActive ? 'Active' : 'Inactive'}}</td>
+                <td>
+                    <p>{{ (project.projectDescription.length > 50) ? ( project.projectDescription | slice:0:50 ) + '...' :
+                        project.projectDescription }}</p>
+                </td>
+                <td class="text-center">
+                    <button routerLink="/project/{{project.projectName}}" class="btn btn-primary"><i
+                            class="fa fa-info fa-sm px-1"></i></button>
+                    <button class="btn btn-danger ms-1" (click)="deleteProject(project.id)" *appHasRole="['Admin', 'Manager']"><i
+                            class="fa fa-trash fa-xs"></i></button>
+                    <button class="btn btn-warning ms-1" data-bs-toggle="modal" data-bs-target="#updateProjectModal"
+                        (click)="patchValues(project)" *appHasRole="['Admin', 'Manager']"><i class="fa fa-pencil fa-sm"></i></button>
+                    <button class="btn btn-success ms-1" data-bs-toggle="modal" data-bs-target="#addMemberModal" *appHasRole="['Admin', 'Manager']"><i
+                           (click)="addProjectMember(project)" class="fa fa-user-plus"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    
+    <div id="updateProjectModal" class="modal fade" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Project</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="closeUpdateProject()"></button>
+                </div>
+                <form [formGroup]="updateProjectForm" (ngSubmit)="updateProjectForm.valid && submit()" autocomplete="off">
+                    <div class="modal-body">
+                        <app-text-input [formControl]="updateProjectForm.controls['projectName']" [label]="'Project Name'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateProjectForm.controls['managerId']" [label]="'Manager Id'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateProjectForm.controls['clientName']" [label]="'Client Name'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateProjectForm.controls['budget']" [label]="'Budget'">
+                        </app-text-input>
+                        <app-text-input [formControl]="updateProjectForm.controls['expenditure']" [label]="'Expenditure'">
+                        </app-text-input>
+                        <app-date-input [formControl]="updateProjectForm.controls['startDate']" [label]="'Date of start'">
+                        </app-date-input>
+                        <app-date-input [formControl]="updateProjectForm.controls['endDate']" [label]="'Date of end'">
+                        </app-date-input>
+                        <app-text-input [formControl]="updateProjectForm.controls['teamSize']" [label]="'Team size'">
+                        </app-text-input>
+                        <div class="form-floating mt-2">
+                            <textarea class="form-control" id="floatingtextarea" style="height: 100px"
+                                formControlName="projectDescription"></textarea>
+                            <label for="floatingtextarea">Project Description</label>
+                        </div>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                                formControlName='isActive'>
+                            <label class="form-check-label" for="flexCheckDefault">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="updateProjectCloseButton" data-bs-dismiss="modal"
+                            (click)="closeUpdateProject()">Close</button>
+                        <button [disabled]="!updateProjectForm.valid" type="submit" class="btn btn-primary"
+                            data-bs-dismiss="modal">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="modal fade container-fluid" id="addMemberModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add members to {{project?.projectName}}</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="closeAddMember()"></button>
+                </div>
+                <form [formGroup]="addMemberForm" (ngSubmit)="addMember()">
+                    <div class="modal-body" style="min-height: 200px;">
+                        <div>
+                            <label>Members:</label>
+                            <!-- <app-text-input [formControl]="addMemberForm.controls['members']" [label]="'Members'"></app-text-input> -->
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ selectedMember?.username || "Select member"}}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li *ngFor="let member of tempMembers">
+                                        <a class="dropdown-item" (click)="selectMember(member)">{{member.username}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            data-bs-dismiss="modal" (click)="closeAddMember()">Close</button>
+                        <button [disabled]="!memberSelected" type="submit" class="btn btn-primary"
+                            data-bs-dismiss="modal">Add member</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

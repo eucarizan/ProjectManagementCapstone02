@@ -1,0 +1,19 @@
+<div class="form-group form-floating">
+    <input 
+        [class.is-invalid]="ngControl.touched && ngControl.invalid" 
+        type={{type}}
+        class="form-control mt-2" 
+        [formControl]="ngControl.control"
+        placeholder={{label}}
+        [id]="ngControl.control">
+        <label [for]="ngControl.control">{{label}}</label>
+        <div *ngIf="ngControl.control.errors?.required" class="invalid-feedback">Please enter a {{label}}</div>
+        <div *ngIf="ngControl.control.errors?.minlength" class="invalid-feedback">
+            {{label}} must be at least {{ngControl.control.errors.minlength['requiredLength']}}</div>
+        <div *ngIf="ngControl.control.errors?.maxlength" class="invalid-feedback">
+            {{label}} must be at most {{ngControl.control.errors.maxlength['requiredLength']}}</div>
+        <div *ngIf="ngControl.control.errors?.isMatching" class="invalid-feedback">
+            Password do not match</div>
+        <div *ngIf="ngControl.control.errors?.spendLessThanBudget" class="invalid-feedback">
+            Expenditure should be less than or equal to Budget</div>
+</div>

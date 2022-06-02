@@ -1,0 +1,389 @@
+<div class="container" style="background-color: #e6e6e6; min-height: 92vh;">
+    <div class="row" *appHasRole="['Manager', 'Admin']">
+
+        <!-- TEAM INFO START -->
+
+        <div class="col-3 text-center">
+            <div class="mx-3 px-2 py-2 text-center text-light" style="background-color: #738c96; border-radius: 3px;">
+                <strong>
+                    Team Leader
+                </strong>
+            </div>
+            <div class="my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor"
+                    class="bi bi-person-circle" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                    <path fill-rule="evenodd"
+                        d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+                </svg>
+            </div>
+            <div class="my-2"><strong>{{member?.firstName}} {{member?.lastName}}</strong></div>
+            <div class="mb-2 mt-4">
+                TEAM SUMMARY
+                <ul class="list-group text-start my-2">
+                    <!-- <li class="list-group-item">NO. OF TEAM MEMBERS<span class="badge rounded-pill bg-secondary float-end">67</span>
+                    </li> -->
+                    <li class="list-group-item">NO. OF TEAM MEMBERS<span
+                            class="badge rounded-pill bg-secondary float-end">{{memberCount || "0"}}</span>
+                    </li>
+                    <li class="list-group-item">TOTAL COST OF ALL PROJECTS<span
+                            class="badge rounded-pill bg-secondary float-end">$
+                            {{totalCost || "0"}}</span></li>
+                    <li class="list-group-item">PENDING TASK<span
+                            class="badge rounded-pill bg-secondary float-end">{{taskCount || "0"}}</span>
+                    </li>
+                    <!-- <li class="list-group-item">UPCOMING PROJECTS<span class="badge rounded-pill bg-secondary float-end">{{teamInfo?.totalCost || "0"}}</span>
+                    </li> -->
+                </ul>
+            </div>
+            <div class="mb-2 mt-4">
+                CLIENTS
+                <ul class="list-group text-start my-2">
+                    <!-- <li *ngFor="let info of teamInfo" class="list-group-item">ABC Infotech Ltd.</li> -->
+                    <li *ngFor="let client of clients" class="list-group-item">{{client}}</li>
+                    <!-- <li class="list-group-item">DEF Software Solutions</li>
+                    <li class="list-group-item">GHI Industries</li> -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- TEAM INFO END -->
+        <!-- TEAM PROJ START -->
+
+        <div class="col-6">
+            <div>
+                <div class="row">
+                    <div class="dropdown col">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            {{selectedProject?.projectName || "Select Project"}}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li *ngFor="let project of projects">
+                                <a class="dropdown-item"
+                                    (click)="getProjectDetails(project)">{{project.projectName}}</a>
+                            </li>
+                            <div class="dropdown-divider"></div>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addProjectModal">Add
+                                    Project</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- <div class="dropdown col-auto">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            2019
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="#">2019</a></li>
+                            <li><a class="dropdown-item" href="#">2021</a></li>
+                            <li><a class="dropdown-item" href="#">2022</a></li>
+                        </ul>
+                    </div> -->
+                </div>
+            </div>
+            <div class="bg-light mt-2" style="height: 78vh;">
+                <div class="mx-3 mb-2 mt-2 px-2 py-2 text-center text-light"
+                    style="background-color: #738c96; border-radius: 3px; display: inline-block; width: 96.65%;">
+                    <strong>
+                        PROJECT BRIEFING
+                    </strong>
+                </div>
+                <div class="mx-3">
+                    <div class="row py-2">
+                        <div class="col">Project Cost</div>
+                        <div class="col">{{selectedProject ? '$'+selectedProject.budget : "N/A"}}</div>
+                        <!-- <div class="col">{{selectedProject | currency:'USD'}}</div> -->
+                    </div>
+                    <div class="row py-2">
+                        <div class="col">Current Expenditure</div>
+                        <div class="col">{{selectedProject ? '$'+selectedProject.expenditure : "N/A"}}</div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col">Available Funds</div>
+                        <div class="col">{{selectedProject ? '$'+(selectedProject.budget - selectedProject.expenditure)
+                            : "N/A"}}</div>
+                    </div>
+                </div>
+                <div class="mx-3 mb-2 mt-2 px-2 py-2 text-center text-light"
+                    style="background-color: #738c96; border-radius: 3px;">
+                    <strong>
+                        TEAM MEMBERS SUMMARY
+                    </strong>
+                </div>
+                <div class="mx-3">
+                    <table class="table" id="teamsummary">
+                        <thead>
+                            <tr>
+                                <th scope="col">Region</th>
+                                <th scope="col">Team Members Count</th>
+                                <th scope="col">Temporarily Unavailable Members</th>
+                            </tr>
+                        </thead>
+                        <tbody style="border-top: 1px;">
+                            <tr>
+                                <td><strong>East</strong></td>
+                                <td class="text-center">{{eastMembers.length}}</td>
+                                <td class="text-center">{{eastUnavailable}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>South</strong></td>
+                                <td class="text-center">{{southMembers.length}}</td>
+                                <td class="text-center">{{southUnavailable}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>West</strong></td>
+                                <td class="text-center">{{westMembers.length}}</td>
+                                <td class="text-center">{{westUnavailable}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>North</strong></td>
+                                <td class="text-center">{{northMembers.length}}</td>
+                                <td class="text-center">{{northUnavailable}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEAM PROJ END -->
+        <!-- TEAM MEMBERS START -->
+
+        <div class="col-3">
+            <div class="mx-3 mb-2 px-2 py-2 text-center text-light"
+                style="background-color: #738c96; border-radius: 3px;">
+                <strong>
+                    TEAM MEMBERS
+                </strong>
+            </div>
+            <div class="accordion" id="accordionExample" style="background-color: #6d7579; border-radius: 3px;">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button py-4 text-light" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                            style="background-color: #6d7579;">
+                            East
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <table class="table">
+                                <thead style="border-top: 1px solid #e9ebee;">
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="border-top: 2px solid #e9ebee;">
+                                    <!-- <tr>
+                                        <app-tr-input *ngIf="eastMember" [idx]="1" [name]="eastMember.firstName" [status]="eastMember.status"></app-tr-input>
+                                    </tr> -->
+                                    <tr *ngFor="let member of eastMembers; index as i">
+                                        <td scope="row">{{i+1}}</td>
+                                        <td>{{member.firstName}}</td>
+                                        <td *ngIf="member.status == 'Available'"><svg xmlns="http://www.w3.org/2000/svg"
+                                                width="16" height="16" fill="currentColor" class="bi bi-telephone-fill"
+                                                viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z" />
+                                            </svg> Available</td>
+                                        <td *ngIf="member.status != 'Available'"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z" />
+                                            </svg> Busy</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button py-4 collapsed text-light" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                            aria-controls="collapseTwo" style="background-color: #6d7579;">
+                            South
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <table class="table">
+                                <thead style="border-top: 1px solid #e9ebee;">
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="border-top: 2px solid #e9ebee;">
+                                    <!-- <tr>
+                                        <app-tr-input *ngIf="eastMember" [idx]="1" [name]="eastMember.firstName" [status]="eastMember.status"></app-tr-input>
+                                    </tr> -->
+                                    <tr *ngFor="let member of southMembers; index as i">
+                                        <td scope="row">{{i+1}}</td>
+                                        <td>{{member.firstName}}</td>
+                                        <td *ngIf="member.status == 'Available'"><svg xmlns="http://www.w3.org/2000/svg"
+                                                width="16" height="16" fill="currentColor" class="bi bi-telephone-fill"
+                                                viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z" />
+                                            </svg> Available</td>
+                                        <td *ngIf="member.status != 'Available'"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z" />
+                                            </svg> Busy</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button py-4 collapsed text-light" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
+                            aria-controls="collapseThree" style="background-color: #6d7579;">
+                            West
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <table class="table">
+                                <thead style="border-top: 1px solid #e9ebee;">
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="border-top: 2px solid #e9ebee;">
+                                    <!-- <tr>
+                                        <app-tr-input *ngIf="eastMember" [idx]="1" [name]="eastMember.firstName" [status]="eastMember.status"></app-tr-input>
+                                    </tr> -->
+                                    <tr *ngFor="let member of westMembers; index as i">
+                                        <td scope="row">{{i+1}}</td>
+                                        <td>{{member.firstName}}</td>
+                                        <td *ngIf="member.status == 'Available'"><svg xmlns="http://www.w3.org/2000/svg"
+                                                width="16" height="16" fill="currentColor" class="bi bi-telephone-fill"
+                                                viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z" />
+                                            </svg> Available</td>
+                                        <td *ngIf="member.status != 'Available'"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z" />
+                                            </svg> Busy</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button py-4 collapsed text-light" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false"
+                            aria-controls="collapseThree" style="background-color: #6d7579;">
+                            North
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                        data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <table class="table">
+                                <thead style="border-top: 1px solid #e9ebee;">
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="border-top: 2px solid #e9ebee;">
+                                    <!-- <tr>
+                                        <app-tr-input *ngIf="eastMember" [idx]="1" [name]="eastMember.firstName" [status]="eastMember.status"></app-tr-input>
+                                    </tr> -->
+                                    <tr *ngFor="let member of northMembers; index as i">
+                                        <td scope="row">{{i+1}}</td>
+                                        <td>{{member.firstName}}</td>
+                                        <td *ngIf="member.status == 'Available'"><svg xmlns="http://www.w3.org/2000/svg"
+                                                width="16" height="16" fill="currentColor" class="bi bi-telephone-fill"
+                                                viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z" />
+                                            </svg> Available</td>
+                                        <td *ngIf="member.status != 'Available'"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z" />
+                                            </svg> Busy</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEAM MEMBERS END -->
+
+    </div>
+    <div *ngIf="member">
+        <app-member-detail [username]="member.username" *appHasRole="['Member']"></app-member-detail>
+    </div>
+    <!-- <div *appHasRole="['Admin']"><p class="text-center">Hi Admin</p></div> -->
+</div>
+
+<div id="addProjectModal" class="modal fade" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeAddProject()"></button>
+            </div>
+            <form [formGroup]="addProjectForm" (ngSubmit)="addProjectForm.valid && submit()" autocomplete="off">
+                <div class="modal-body">
+                    <app-text-input [formControl]="addProjectForm.controls['projectName']" [label]="'Project Name'">
+                    </app-text-input>
+                    <app-text-input [formControl]="addProjectForm.controls['managerId']" [label]="'Manager Id'">
+                    </app-text-input>
+                    <app-text-input [formControl]="addProjectForm.controls['clientName']" [label]="'Client Name'">
+                    </app-text-input>
+                    <app-text-input [formControl]="addProjectForm.controls['budget']" [label]="'Budget'">
+                    </app-text-input>
+                    <app-text-input [formControl]="addProjectForm.controls['expenditure']" [label]="'Expenditure'">
+                    </app-text-input>
+                    <app-date-input [formControl]="addProjectForm.controls['startDate']" [label]="'Date of start'">
+                    </app-date-input>
+                    <app-date-input [formControl]="addProjectForm.controls['endDate']" [label]="'Date of end'">
+                    </app-date-input>
+                    <app-text-input [formControl]="addProjectForm.controls['teamSize']" [label]="'Team size'">
+                    </app-text-input>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                            formControlName='isActive'>
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Active
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="addProjectCloseButton"
+                        data-bs-dismiss="modal" (click)="closeAddProject()">Close</button>
+                    <button [disabled]="!addProjectForm.valid" type="submit" class="btn btn-primary"
+                        data-bs-dismiss="modal">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
